@@ -58,4 +58,4 @@
 #Filtruj retransmisjie TCP z zerowym ID IP
   ip.id == 0 && tcp.analysis.retransmission
 #Filtruj ruch HTTP z obrazkami
-  http.request.uri matches ".*(\.jpg|\.png|\.gif)$"
+  http.request.uri matches ".*(.jpg|.png|.gif)$"
