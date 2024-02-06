@@ -1,3 +1,4 @@
+import socket
 from scapy.all import *
 from scapy.layers.http import HTTP, HTTPRequest
 
@@ -34,10 +35,13 @@ def generate_tls_encrypted_traffic_pcap():
 # Scenariusz 5: Analiza wydajności API REST
 def generate_api_performance_pcap():
     packets = []
+    # Resolve domain name to IP address
+    api_ip = socket.gethostbyname("api.example.com")
+    
     for i in range(1, 6):  # Generowanie 5 żądań API z różnymi czasami odpowiedzi
-        request = Ether() / IP(dst="api.example.com") / TCP(dport=80) / HTTP() / HTTPRequest(Method="GET", Path=f"/api/resource/{i}")
+        request = Ether() / IP(dst=api_ip) / TCP(dport=80) / HTTP() / HTTPRequest(Method="GET", Path=f"/api/resource/{i}")
         response_delay = i * 0.1  # Symulacja zwiększającego się opóźnienia odpowiedzi
-        response = Ether() / IP(src="api.example.com") / TCP(sport=80) / HTTP() / f"HTTP/1.1 200 OK\r\nContent-Length: 4\r\n\r\nData{i}"
+        response = Ether() / IP(src=api_ip) / TCP(sport=80) / HTTP() / f"HTTP/1.1 200 OK\r\nContent-Length: 4\r\n\r\nData{i}"
         response.time = request.time + response_delay
         packets.extend([request, response])
     wrpcap("api_performance.pcap", packets)
